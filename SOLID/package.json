@@ -1,0 +1,10 @@
+{
+  "name": "SOLID",
+  "description": "SOLID exercises",
+  "dependencies": {
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "dev": "tsc -w"
+  }
+}

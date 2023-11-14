@@ -1,0 +1,15 @@
+{
+  "name": "factory",
+  "description": "factory exercises",
+  "dependencies": {
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "tsc": "tsc -w"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1"
+  }
+}
