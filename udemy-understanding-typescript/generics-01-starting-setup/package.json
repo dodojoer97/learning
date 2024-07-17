@@ -4,8 +4,6 @@
   "description": "Understanding TypeScript Course Setup",
   "main": "app.js",
   "scripts": {
-    "start:ts": "tsc -w",
-    "start:nodemon": "nodemon ./src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "lite-server"
   },
@@ -16,9 +14,6 @@
   "author": "Maximilian Schwarzmüller",
   "license": "ISC",
   "devDependencies": {
-    "lite-server": "^2.5.4",
-    "nodemon": "^2.0.22",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "lite-server": "^2.5.4"
   }
 }
