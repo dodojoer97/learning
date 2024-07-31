@@ -1,23 +1,23 @@
-// // *** Decorator ***
+// *** Decorator ***
 // function Logger(constructor: Function) {
 //     console.log("LOggin....");
 //     console.log(constructor);
 // }
 
-// // @Logger
-// // class PersonEX {
-// //     name = "max"
-// //     constructor() {
-// //         console.log("Creating PersonEX object...")
-// //     }
-// // }
+// @Logger
+// class PersonEX {
+//     name = "max"
+//     constructor() {
+//         console.log("Creating PersonEX object...")
+//     }
+// }
 
-// // const pers = new PersonEX()
-// // console.log(pers)
+// const pers = new PersonEX()
+// console.log(pers)
 
 
 
-// // *** Decorator factory ***
+// *** Decorator factory ***
 // function LoggerFactory(logString: string) {
 //     return function (constructor: Function) {
 //         console.log(logString);
@@ -27,41 +27,46 @@
 // }
 
 
-// // @LoggerFactory("LOGGING-PERSON")
-// // class PersonFactoryEX {
-// //     name = "max"
-// //     constructor() {
-// //         console.log("Creating PersonFactoryEX object...")
-// //     }
-// // }
-
-// // const persFactoryEx = new PersonFactoryEX()
-// // console.log(persFactoryEx)
-
-
-// // More useful
-// function WithTemplate(template: string, hookId: string) {
-//     return function(constructor: any) {
-//         console.log("Rendering template")
-//         const hookEl: HTMLDivElement | null = document.querySelector(hookId)
-//         const p = new constructor()
-//         if(hookEl) {
-//             hookEl.innerHTML = template
-//             hookEl.querySelector("h1")!.textContent = p.name
-//         }
-//     }
-// }
-
-// // Multiple decorators
-// @LoggerFactory("PersonHTML")
-// @WithTemplate("<h1>My Person</h1>", "#app")
-// class PersonHTML {
-//     name = 'NAME'
-
+// @LoggerFactory("LOGGING-PERSON")
+// class PersonFactoryEX {
+//     name = "max"
 //     constructor() {
-
+//         console.log("Creating PersonFactoryEX object...")
 //     }
 // }
+
+// const persFactoryEx = new PersonFactoryEX()
+// console.log(persFactoryEx)
+
+
+// More useful ex
+function WithTemplate(template: string, hookId: string) {
+    console.log("TEMPLATE FACTORY")
+    return function<T extends {new(...args: any[]): {name: string}}>(originalConstructor: T) {
+        return class extends originalConstructor {
+            constructor(..._: any[]) {
+                super()
+                console.log("Rendering template")
+                const hookEl: HTMLDivElement | null = document.querySelector(hookId)
+                if(hookEl) {
+                    hookEl.innerHTML = template
+                    hookEl.querySelector("h1")!.textContent = this.name
+                }
+            }
+        }
+    }
+}
+
+// Multiple decorators
+// @LoggerFactory("PersonHTML")
+@WithTemplate("<h1>My Person</h1>", "#app")
+class PersonHTML {
+    name = 'NAME'
+
+    constructor() {
+
+    }
+}
 
 // Property decorators 
 
@@ -117,3 +122,35 @@ class Product {
         return this._price * (1 + tax)
     }
 }
+
+// AUtobind
+
+
+function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value
+    const adjustedDescriptor: PropertyDescriptor = {
+        configurable: true,
+        enumerable: false,
+        get() {
+            const boundFn = originalMethod.bind(this)
+            return boundFn
+        }
+    }
+
+    return adjustedDescriptor
+}
+
+class Printer {
+    message = "This works"
+    
+    @AutoBind
+    showMessage() {
+        console.log(this.message)
+    }
+}
+
+const printer = new Printer()
+
+const button = document.querySelector("button") as HTMLButtonElement
+
+button.addEventListener("click", printer.showMessage)
