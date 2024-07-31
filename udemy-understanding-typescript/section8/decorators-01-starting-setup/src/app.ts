@@ -154,3 +154,75 @@ const printer = new Printer()
 const button = document.querySelector("button") as HTMLButtonElement
 
 button.addEventListener("click", printer.showMessage)
+
+
+// Validation
+
+interface ValidatorConfig {
+    [propery: string]: {
+        [validatableProp: string]: string[] // [required, positive]
+    }
+
+}
+
+const registeredValidators: ValidatorConfig = {
+}
+
+
+function Required(target: any, propName: string) {
+    registeredValidators[target.constructor.name] =  {
+        [propName]: ['required']
+    }
+}
+
+function PositiveNumber(target: any, propName: string) {
+    registeredValidators[target.constructor.name] =  {
+        [propName]: ['positive']
+    }
+}
+
+function validate(obj: any): boolean {
+    const config = registeredValidators[obj.constructor.name]
+
+    if(!config) return true
+
+    for(const prop in config) {
+        for(const validator of config[prop]) {
+            switch(validator) {
+                case 'required': 
+                    return !!obj[prop]
+                case 'positive': 
+                    return obj[prop] > 0 
+            }
+        }
+    }
+
+    return true
+}
+class Course {
+    @Required
+    title: string
+    @PositiveNumber
+    price: number
+    constructor(title: string, price: number) {
+        this.title = title
+        this.price = price
+    }
+}
+
+const courseForm = document.querySelector("form") as HTMLFormElement
+
+courseForm.addEventListener("submit", e => {
+    e.preventDefault()
+    const titleEl = document.querySelector("#title") as HTMLInputElement
+    const priceEl  = document.querySelector("#price ") as HTMLInputElement
+
+    const title = titleEl.value
+    const price = +priceEl.value
+
+    const createdCourse = new Course(title, price)
+
+    if(!validate(createdCourse)) throw new Error("NOT VALID")
+    console.log(createdCourse)
+
+})
