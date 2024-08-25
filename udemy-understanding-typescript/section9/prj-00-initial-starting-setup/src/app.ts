@@ -82,10 +82,30 @@ class ProjectInput {
         const enteredTitle = this.titleInputElement.value
         const enteredDescription = this.descriptionInputElement.value
         const enteredPeople = this.peopleInputElement.value
+
+        const titleValidatable: Validatable = {
+            value: enteredTitle,
+            required: true
+        }
+        const descriptionValidatable: Validatable = {
+            value: enteredDescription,
+            required: true
+        }
+
+        const peopleValidatable: Validatable = {
+            value: +enteredPeople,
+            required: true,
+            min: 1,
+            max: 5
+        }
         console.log("enteredDescription: ", enteredDescription)
         console.log("enteredPeople: ", enteredPeople)
         if(
-            validate({value: enteredTitle, required: true, minLength: 5})
+            !validate(titleValidatable) 
+            ||
+            !validate(descriptionValidatable) 
+            ||
+            !validate(peopleValidatable) 
         ) {
             alert("invalid inputttt")
         }else {
