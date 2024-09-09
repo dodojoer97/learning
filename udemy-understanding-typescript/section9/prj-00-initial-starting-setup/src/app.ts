@@ -120,7 +120,34 @@ function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
 }
 
 
+// Component base class
+class Component<T extends HTMLElement, U extends HTMLElement> {
+    templateElement: HTMLTemplateElement
+    hostElement: T
+    element: U
+    constructor(
+        templateId: string,
+        hostELementId: string,
+        newElementId? :string
+    ) {
+        this.templateElement = document.getElementById(templateId) as HTMLTemplateElement
+        this.hostElement = document.getElementById(hostELementId) as T
+        // Get the content of a html template
+        const importedNode: DocumentFragment = document.importNode(this.templateElement.content, true)
 
+        this.element = importedNode.firstElementChild as U
+        if(newElementId) {
+            this.element.id = newElementId
+        }
+
+        this.attach()
+    }
+
+    
+    private attach() {
+        this.hostElement.insertAdjacentElement("beforeend", this.element)
+    }
+}
 
 // List
 class ProjectList {
@@ -133,11 +160,7 @@ class ProjectList {
         this.templateElement = document.querySelector("#project-list") as HTMLTemplateElement
         this.hostElement = document.querySelector("#app") as HTMLDivElement
 
-        // Get the content of a html template
-        const importedNode: DocumentFragment = document.importNode(this.templateElement.content, true)
 
-        this.element = importedNode.firstElementChild as HTMLElement
-        this.element.id = `${this.type}-projects`;
 
         this.assignedProjects = []
 
@@ -176,9 +199,6 @@ class ProjectList {
         this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + " PROJECTS"
     }
 
-    private attach() {
-        this.hostElement.insertAdjacentElement("beforeend", this.element)
-    }
 }
 
 
