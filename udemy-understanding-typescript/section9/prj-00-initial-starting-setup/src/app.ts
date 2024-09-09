@@ -18,8 +18,10 @@ class Project {
 
 
 // Project state managament
+
+type Listener = (items: Project[]) => void
 class ProjectState {
-    private listeners: any[] = []
+    private listeners: Listener[] = []
     private projects: Project[] = [
 
     ]
@@ -40,7 +42,7 @@ class ProjectState {
         return this.instance
     }
 
-    addListener(listenerFN: Function) {
+    addListener(listenerFN: Listener) {
         this.listeners.push(listenerFN)
     }
 
@@ -127,7 +129,6 @@ class ProjectList {
     element: HTMLElement
     assignedProjects: Project[]
 
-
     constructor(private type: "active" | "finished") {
         this.templateElement = document.querySelector("#project-list") as HTMLTemplateElement
         this.hostElement = document.querySelector("#app") as HTMLDivElement
@@ -141,7 +142,15 @@ class ProjectList {
         this.assignedProjects = []
 
         projectState.addListener((projects: Project[]) => {
-            this.assignedProjects = projects
+            const relevantProjects = projects.filter(project => {
+                if(this.type === 'active' ) {
+                    return project.status === ProjectStatus.ACTIVE 
+                }else {
+                    return project.status === ProjectStatus.FINISHED 
+                }
+                
+            })
+            this.assignedProjects = relevantProjects
             this.renderProjects()
         })
 
@@ -151,6 +160,7 @@ class ProjectList {
 
     private renderProjects() {
         const listEl = document.querySelector(`#${this.type}-projects-list`) as HTMLUListElement
+        listEl.innerHTML = ""
         for(const project of this.assignedProjects) {
             const listItem = document.createElement('li')
             listItem.textContent = project.title
