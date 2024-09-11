@@ -121,13 +121,14 @@ function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
 
 
 // Component base class
-class Component<T extends HTMLElement, U extends HTMLElement> {
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     templateElement: HTMLTemplateElement
     hostElement: T
     element: U
     constructor(
         templateId: string,
         hostELementId: string,
+        insertAtStart: boolean,
         newElementId? :string
     ) {
         this.templateElement = document.getElementById(templateId) as HTMLTemplateElement
@@ -140,26 +141,24 @@ class Component<T extends HTMLElement, U extends HTMLElement> {
             this.element.id = newElementId
         }
 
-        this.attach()
+        this.attach(insertAtStart)
     }
 
     
-    private attach() {
-        this.hostElement.insertAdjacentElement("beforeend", this.element)
+    private attach(insertAtStart: boolean) {
+        this.hostElement.insertAdjacentElement(insertAtStart ? "afterbegin" :"beforeend", this.element)
     }
+
+    abstract configure(): void
+    abstract renderContent(): void
 }
 
 // List
-class ProjectList {
-    templateElement: HTMLTemplateElement
-    hostElement: HTMLDivElement
-    element: HTMLElement
+class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     assignedProjects: Project[]
 
     constructor(private type: "active" | "finished") {
-        this.templateElement = document.querySelector("#project-list") as HTMLTemplateElement
-        this.hostElement = document.querySelector("#app") as HTMLDivElement
-
+        super("project-list", "app" , false,`${type}-projects`)
 
 
         this.assignedProjects = []
@@ -177,7 +176,6 @@ class ProjectList {
             this.renderProjects()
         })
 
-        this.attach()
         this.renderContent()
     }
 
