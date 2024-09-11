@@ -19,9 +19,16 @@ class Project {
 
 // Project state managament
 
-type Listener = (items: Project[]) => void
-class ProjectState {
-    private listeners: Listener[] = []
+type Listener<T> = (items: T[]) => void
+
+class State<T> {
+    protected listeners: Listener<T>[] = []
+    addListener(listenerFN: Listener<T>) {
+        this.listeners.push(listenerFN)
+    }
+}
+
+class ProjectState extends State<Project> {
     private projects: Project[] = [
 
     ]
@@ -30,7 +37,7 @@ class ProjectState {
 
     // SINGLETON PATTENR
     private constructor() {
-
+        super()
     }
 
     static getInstance() {
@@ -42,9 +49,7 @@ class ProjectState {
         return this.instance
     }
 
-    addListener(listenerFN: Listener) {
-        this.listeners.push(listenerFN)
-    }
+
 
     addProject(title: string, description: string, numOfPeople: number) {
         const newProject = new Project(
