@@ -191,41 +191,40 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
             
     }
 
-    private renderContent() {
+    renderContent() {
         const listId = `${this.type}-projects-list`
         this.element.querySelector('ul')!.id = listId
         this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + " PROJECTS"
     }
 
+    configure() {}
+
 }
 
 
 // ProjectInput class
-class ProjectInput {
-    templateElement: HTMLTemplateElement
-    hostElement: HTMLDivElement
-    element: HTMLFormElement
+class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
     titleInputElement: HTMLInputElement
     descriptionInputElement: HTMLInputElement
     peopleInputElement: HTMLInputElement
 
     constructor() {
-        this.templateElement = document.querySelector("#project-input") as HTMLTemplateElement
-        this.hostElement = document.querySelector("#app") as HTMLDivElement
-
-        // Get the content of a html template
-        const importedNode: DocumentFragment = document.importNode(this.templateElement.content, true)
-
-        this.element = importedNode.firstElementChild as HTMLFormElement
-        this.element.id = 'user-input';
-
+        super("project-input", "app", true, 'user-input')
         this.titleInputElement = this.element.querySelector("#title") as HTMLInputElement
         this.descriptionInputElement = this.element.querySelector("#description") as HTMLInputElement
         this.peopleInputElement = this.element.querySelector("#people") as HTMLInputElement
 
-        this.attach()
         this.configure()
     }
+
+    configure() {
+        this.element.addEventListener("submit", this.submitHandler)
+    }
+
+    renderContent(): void {
+        
+    }
+
 
     private gatherUserInput(): [string, string, number] | void {
         const enteredTitle = this.titleInputElement.value
@@ -279,14 +278,8 @@ class ProjectInput {
         
     }
 
-    private configure() {
-        this.element.addEventListener("submit", this.submitHandler)
-    }
 
-
-    private attach() {
-        this.hostElement.insertAdjacentElement("afterbegin", this.element)
-    }
+   
 }
 
 
