@@ -226,20 +226,10 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
 
         this.assignedProjects = []
 
-        projectState.addListener((projects: Project[]) => {
-            const relevantProjects = projects.filter(project => {
-                if(this.type === 'active' ) {
-                    return project.status === ProjectStatus.ACTIVE 
-                }else {
-                    return project.status === ProjectStatus.FINISHED 
-                }
-                
-            })
-            this.assignedProjects = relevantProjects
-            this.renderProjects()
-        })
 
         this.renderContent()
+
+        this.configure()
     }
 
     private renderProjects() {
@@ -265,7 +255,6 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
     @Autobind
     dropHandler(event: DragEvent): void {
         console.log("ProjectList ~ dropHandler ~ event:", event)
-        
     }
 
 
@@ -282,7 +271,25 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
         this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + " PROJECTS"
     }
 
-    configure() {}
+    configure() {
+        // this.element.addEventListener("dragover", this.dragOverHandler)
+        // this.element.addEventListener("dragleave", this.dragLeaveHandler)
+        // this.element.addEventListener("drop", this.dropHandler)
+
+        projectState.addListener((projects: Project[]) => {
+            const relevantProjects = projects.filter(project => {
+                if(this.type === 'active' ) {
+                    return project.status === ProjectStatus.ACTIVE 
+                }else {
+                    return project.status === ProjectStatus.FINISHED 
+                }
+                
+            })
+            this.assignedProjects = relevantProjects
+            this.renderProjects()
+        })
+
+    }
 
 
 }
