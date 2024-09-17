@@ -272,9 +272,9 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
     }
 
     configure() {
-        // this.element.addEventListener("dragover", this.dragOverHandler)
-        // this.element.addEventListener("dragleave", this.dragLeaveHandler)
-        // this.element.addEventListener("drop", this.dropHandler)
+        this.element.addEventListener("dragover", this.dragOverHandler)
+        this.element.addEventListener("dragleave", this.dragLeaveHandler)
+        this.element.addEventListener("drop", this.dropHandler)
 
         projectState.addListener((projects: Project[]) => {
             const relevantProjects = projects.filter(project => {
