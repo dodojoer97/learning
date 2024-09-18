@@ -75,6 +75,19 @@ class ProjectState extends State<Project> {
         this.projects.push(newProject)
 
         // Call all listeners
+        this.updateListeners()
+    }
+
+    moveProject(projectId: string, newStatus: ProjectStatus) {
+        const project = this.projects.find((project: Project) => project.id === projectId)
+        if(project) {
+            project.status = newStatus
+        }
+
+        this.updateListeners()
+    }
+
+    private updateListeners() {
         for(const listenerFN of this.listeners) {
             listenerFN(this.projects.slice())
         }
@@ -193,7 +206,8 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements 
     
     @Autobind
     dragStartHandler(event: DragEvent): void {
-        console.log(event)
+        event.dataTransfer?.setData("text/plain", this.project.id)
+        event.dataTransfer!.effectAllowed = "move"
     }
 
     @Autobind
@@ -247,21 +261,28 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Drag
 
     @Autobind
     dragOverHandler(event: DragEvent): void {
-        console.log("ProjectList ~ dragOverHandler ~ event:", event)
-        const listEl = this.element.querySelector("ul")!
-        listEl.classList.add("droppable")
+        if(event.dataTransfer && event.dataTransfer.types[0] === "text/plain") {
+            event.preventDefault()
+            const listEl = this.element.querySelector("ul")!
+            listEl.classList.add("droppable")
+        }
     }
 
     @Autobind
     dropHandler(event: DragEvent): void {
-        console.log("ProjectList ~ dropHandler ~ event:", event)
+      const projectId =  event.dataTransfer?.getData("text/plain")
+      if(projectId) {
+          projectState.moveProject(projectId, this.type === "active" ? ProjectStatus.ACTIVE : ProjectStatus.FINISHED)
+
+      }
     }
 
 
     @Autobind
     dragLeaveHandler(event: DragEvent): void {
-        console.log("ProjectList ~ dragLeaveHandler ~ event:", event)
-        
+        console.log("ProjectList ~  ~ event:", event)
+                const listEl = this.element.querySelector("ul")!
+        listEl.classList.remove("droppable")
     }
 
 

@@ -112,6 +112,12 @@ button:active {
   margin: 0;
 }
 
+
+[draggable] {
+  cursor: default !important;
+}
+
+
 .droppable {
   background: #ffe3ee;
 }
