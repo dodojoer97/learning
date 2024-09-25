@@ -7,7 +7,6 @@
 /// <reference path="./components/project-item.ts" />
 /// <reference path="./components/project-input.ts" />
 
-import ProjectInput from
 
 namespace App {
 	// Project type
